@@ -67,3 +67,13 @@ Swagger UI
       required: true
       description: the job id
 ```
+#### API END POINTS
+
+
+  POST /api/auth/register – Create a new user
+  POST /api/auth/login – Get JWT token
+  GET /api/resturant – Get all Resturant
+  GET /api/resturant/:id – Get resturant details & reviews
+  POST /api/resturant/:id/reviews – Submit a review (auth required)
+  PUT /api/reviews/:id – Edit own review
+  DELETE /api/reviews/:id – Delete own review
