@@ -1,15 +1,15 @@
 require("dotenv").config();
 
 const connectDB = require("./db/connect");
-const Resturant = require("./models/Resturant");
+const Restaurant = require("./models/Restaurant");
 
-const jsonResturant = require("./resturant.json");
+const jsonRestaurant = require("./restaurant.json");
 
 const start = async () => {
   try {
     await connectDB(process.env.MONGO_URI);
-    await Resturant.deleteMany();
-    await Resturant.create(jsonResturant);
+    await Restaurant.deleteMany();
+    await Restaurant.create(jsonRestaurant);
     console.log("Success!!!!");
     process.exit(0);
   } catch (error) {
