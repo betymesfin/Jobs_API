@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A.A Review</title>
+</head>
+
+<body>
+    <h1>A.A Review</h1>
+    <hr />
+    <p id="message"></p>
+    <hr />
+    <div id="logon-register" style="display:none;">
+        <button type="button" id="logon">logon</button>
+        <button type="button" id="register">register</button>
+    </div>
+    <div id="logon-div" style="display:none;">
+        <form>
+            <div>
+                <label for="email">email:</label>
+                <input type="email" id="email" />
+            </div>
+            <div>
+                <label for="password">password:</label>
+                <input type="password" id="password" />
+            </div>
+            <button type="button" id="logon-button">logon</button>
+            <button type="button" id="logon-cancel">cancel</button>
+        </form>
+    </div>
+    <div id="register-div" style="display:none;">
+        <form>
+            <div>
+                <label for="name">name:</label>
+                <input type="text" id="name" />
+            </div>
+            <div>
+                <label for="email1">email:</label>
+                <input type="email" id="email1" />
+            </div>
+            <div>
+                <label for="password1">password:</label>
+                <input type="password" id="password1" />
+            </div>
+            <div>
+                <label for="password2">verify password:</label>
+                <input type="password" id="password2" />
+            </div>
+            <button type="button" id="register-button">register</button>
+            <button type="button" id="register-cancel">cancel</button>
+        </form>
+    </div>
+    <div id="jobs" style="display:none;">
+        <p id="jobs-message"></p>
+        <table id="jobs-table">
+            <tr id="jobs-table-header">
+                <th>Comment</th>
+                <th>Rating</th>
+                <th>Type</th>
+                <th colspan="2"></th>
+            </tr>
+        </table>
+        <button type="button" id="add-job">add Review</button>
+        <button type="button" id="logoff">log off</button>
+    </div>
+    <div id="edit-job" style="display:none;">
+        <form>
+            <div>
+                <label for="comment">comment:</label>
+                <input type="text" id="comment" />
+            </div>
+            
+            <div>
+                <label for="type">type:</label>
+                <select id="type">
+                    <option value="dinein">Dine-In</option>
+                    <option value="delivery">Delivery</option>
+                    <option value="takeaway">Take-away</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+            <div>
+                <label for="rating">rating:</label>
+                <input type="number" id="rating" />
+            </div>
+            <button type="button" id="adding-job">add</button>
+            <button type="button" id="edit-cancel">cancel</button>
+        </form>
+    </div>
+ <script src="./index.js" type="module"></script>
+</body>
+
+</html>

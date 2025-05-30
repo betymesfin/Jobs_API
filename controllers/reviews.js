@@ -26,23 +26,22 @@ const getReview = async (req, res) => {
 };
 
 const getReviewByRestaurantId = async (req, res) => {
+  const {
+    user: { userId },
+    params: { id: restaurantId },
+  } = req;
 
-    const {
-      user: { userId },
-      params: { id: restaurantId },
-    } = req;
+  const review = await Review.findOne({
+    restaurant: restaurantId,
+    createdBy: userId,
+  });
 
-    const review = await Review.findOne({
-      restaurant: restaurantId,
-      createdBy: userId,
-    });
-
-    if (!review) {
-      throw new NotFoundError(
-        `No review found for restaurant ID ${restaurantId} by user ${userId}`
-      );
-    }
-    res.status(StatusCodes.OK).json({ review });
+  if (!review) {
+    throw new NotFoundError(
+      `No review found for restaurant ID ${restaurantId} by user ${userId}`
+    );
+  }
+  res.status(StatusCodes.OK).json({ review });
 };
 
 const createReview = async (req, res) => {
@@ -86,7 +85,7 @@ const deleteReview = async (req, res) => {
   if (!review) {
     throw new NotFoundError(`No review with id ${reviewId}`);
   }
-  res.status(StatusCodes.OK).send();
+  res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };
 module.exports = {
   createReview,
