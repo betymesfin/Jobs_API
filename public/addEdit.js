@@ -45,10 +45,9 @@ export const handleAddEdit = () => {
           const data = await response.json();
           if (response.status === 200 || response.status === 201) {
             if (response.status === 200) {
-              // a 200 is expected for a successful update
+            
               message.textContent = "The review entry was updated.";
             } else {
-              // a 201 is expected for a successful create
               message.textContent = "The review entry was created.";
             }
 
@@ -76,7 +75,7 @@ export const showAddEdit = async (jobId) => {
   if (!jobId) {
     comment.value = "";
     rating.value = "";
-    type.value = "pending";
+    type.value = "Dine-In";
     addingReview.textContent = "add";
     message.textContent = "";
 
@@ -94,17 +93,17 @@ export const showAddEdit = async (jobId) => {
       });
 
       const data = await response.json();
+      console.log(data); 
       if (response.status === 200) {
-        comment.value = data.reviews.comment;
-        rating.value = data.reviews.rating;
-        type.value = data.reviews.type;
+        comment.value = data.review.comment;
+        rating.value = data.review.rating;
+        type.value = data.review.type;
         addingReview.textContent = "update";
         message.textContent = "";
         addEditDiv.dataset.id = jobId;
 
         setDiv(addEditDiv);
       } else {
-        // might happen if the list has been updated since last display
         message.textContent = "The reviews entry was not found";
         showJobs();
       }
