@@ -1,16 +1,98 @@
+const mongoose = require("mongoose");
+const { StatusCodes } = require("http-status-codes");
+const Review = require("../models/Reviews");
 
+const getAllReviews = async (req, res) => {
+  const reviews = await Review.find({ createdBy: req.user.userId }).sort(
+    "createdAt"
+  );
+  res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
+};
+
+const getReview = async (req, res) => {
+  const {
+    user: { userId },
+    params: { id: reviewId },
+  } = req;
+
+  const review = await Review.findOne({
+    _id: reviewId,
+    createdBy: userId,
+  });
+  if (!review) {
+    throw new NotFoundError(`No review with id ${reviewId}`);
+  }
+  res.status(StatusCodes.OK).json({ review });
+};
+
+const getReviewByRestaurantId = async (req, res) => {
+
+    const {
+      user: { userId },
+      params: { id: restaurantId },
+    } = req;
+
+    const review = await Review.findOne({
+      restaurant: restaurantId,
+      createdBy: userId,
+    });
+
+    if (!review) {
+      throw new NotFoundError(
+        `No review found for restaurant ID ${restaurantId} by user ${userId}`
+      );
+    }
+    res.status(StatusCodes.OK).json({ review });
+};
 
 const createReview = async (req, res) => {
-  res.send("create review");
+  req.body.createdBy = req.user.userId;
+  //console.log("Incoming review body:", req.body);
+  const review = await Review.create(req.body);
+  res.status(StatusCodes.CREATED).json({ review });
 };
 
 const updateReview = async (req, res) => {
-  res.send("update review");
+  const {
+    body: { comment, rating },
+    user: { userId },
+    params: { id: reviewId },
+  } = req;
+
+  if (comment === " " || rating === " ") {
+    throw new BadRequestError("Comment or Rating fields cannot be empty");
+  }
+  const review = await Review.findByIdAndUpdate(
+    { _id: reviewId, createdBy: userId },
+    req.body,
+    { new: true, runValidators: true }
+  );
+  if (!review) {
+    throw new NotFoundError(`No review with id ${reviewId}`);
+  }
+  res.status(StatusCodes.OK).json({ review });
 };
 
 const deleteReview = async (req, res) => {
-  res.send("delete review");
+  const {
+    user: { userId },
+    params: { id: reviewId },
+  } = req;
+
+  const review = await Review.findByIdAndRemove({
+    _id: reviewId,
+    createdBy: userId,
+  });
+  if (!review) {
+    throw new NotFoundError(`No review with id ${reviewId}`);
+  }
+  res.status(StatusCodes.OK).send();
 };
-
-
-module.exports ={ createReview,updateReview,deleteReview}
+module.exports = {
+  createReview,
+  updateReview,
+  deleteReview,
+  getReview,
+  getAllReviews,
+  getReviewByRestaurantId,
+};
