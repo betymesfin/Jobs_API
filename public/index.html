@@ -53,20 +53,35 @@
             <button type="button" id="register-cancel">cancel</button>
         </form>
     </div>
-    <div id="jobs" style="display:none;">
+    <div id="restaurant" style="display:none;">
         <p id="jobs-message"></p>
-        <table id="jobs-table">
-            <tr id="jobs-table-header">
-                <th>Comment</th>
+        <table id="restaurants-table">
+            <tr id="restaurant-table-header">
+                <th>Name</th>
+                <th>Description</th>
+                <th>Location</th>
                 <th>Rating</th>
+                <th colspan="2"></th>
+            </tr>
+        </table>
+        <button type="button" id="my-reviews">My Reviews</button>
+        <button type="button" id="logoff">log off</button>
+    </div>
+    <div id="reviews" style="display:none;">
+        <p id="jobs-message"></p>
+        <table id="reviews-table">
+            <tr id="reviews-table-header">
+                <th>Name</th>
+                <th>Rating</th>
+                <th>Comment</th>
                 <th>Type</th>
                 <th colspan="2"></th>
             </tr>
         </table>
-        <button type="button" id="add-job">add Review</button>
+        <button type="button" id="back">Back</button>
         <button type="button" id="logoff">log off</button>
     </div>
-    <div id="edit-job" style="display:none;">
+    <div id="edit-review" style="display:none;">
         <form>
             <div>
                 <label for="comment">comment:</label>
@@ -76,7 +91,7 @@
             <div>
                 <label for="type">type:</label>
                 <select id="type">
-                    <option value="dinein">Dine-In</option>
+                    <option value="dine-in">Dine-In</option>
                     <option value="delivery">Delivery</option>
                     <option value="takeaway">Take-away</option>
                     <option value="other">Other</option>
@@ -86,7 +101,7 @@
                 <label for="rating">rating:</label>
                 <input type="number" id="rating" />
             </div>
-            <button type="button" id="adding-job">add</button>
+            <button type="button" id="adding-review">add</button>
             <button type="button" id="edit-cancel">cancel</button>
         </form>
     </div>

@@ -1,18 +1,19 @@
 import { enableInput, inputEnabled, message, setDiv, token } from "./index.js";
-import { showJobs } from "./reviews.js";
+import { showReviews } from "./reviews.js";
 
 let addEditDiv = null;
 let comment = null;
 let rating = null;
 let type = null;
 let addingReview = null;
+let currentRestaurantId = null;
 
 export const handleAddEdit = () => {
-  addEditDiv = document.getElementById("edit-job");
+  addEditDiv = document.getElementById("edit-review");
   comment = document.getElementById("comment");
   rating = document.getElementById("rating");
   type = document.getElementById("type");
-  addingReview = document.getElementById("adding-job");
+  addingReview = document.getElementById("adding-review");
   const editCancel = document.getElementById("edit-cancel");
 
   addEditDiv.addEventListener("click", async (e) => {
@@ -22,10 +23,21 @@ export const handleAddEdit = () => {
 
         let method = "POST";
         let url = "/api/v1/review";
+        const isUpdate = addingReview.textContent === "update";
 
-        if (addingReview.textContent === "update") {
+        if (isUpdate) {
           method = "PATCH";
           url = `/api/v1/review/${addEditDiv.dataset.id}`;
+        }
+
+        const body = {
+          comment: comment.value,
+          rating: rating.value,
+          type: type.value,
+        };
+
+        if (!isUpdate && currentRestaurantId) {
+          body.restaurant = currentRestaurantId;
         }
 
         try {
@@ -35,26 +47,20 @@ export const handleAddEdit = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({
-              comment: comment.value,
-              rating: rating.value,
-              type: type.value,
-            }),
+            body: JSON.stringify(body),
           });
 
           const data = await response.json();
           if (response.status === 200 || response.status === 201) {
-            if (response.status === 200) {
-            
-              message.textContent = "The review entry was updated.";
-            } else {
-              message.textContent = "The review entry was created.";
-            }
+            message.textContent =
+              response.status === 200
+                ? "The review entry was updated."
+                : "The review entry was created.";
 
             comment.value = "";
             rating.value = "";
             type.value = "";
-            showJobs();
+            showReviews();
           } else {
             message.textContent = data.msg;
           }
@@ -62,25 +68,29 @@ export const handleAddEdit = () => {
           console.log(err);
           message.textContent = "A communication error occurred.";
         }
+
         enableInput(true);
       } else if (e.target === editCancel) {
         message.textContent = "";
-        showJobs();
+        showReviews();
       }
     }
   });
 };
 
-export const showAddEdit = async (jobId) => {
+export const showAddEdit = async (jobId, restaurantId = null) => {
+  currentRestaurantId = restaurantId;
+
   if (!jobId) {
+    // Adding new review
     comment.value = "";
     rating.value = "";
     type.value = "Dine-In";
     addingReview.textContent = "add";
     message.textContent = "";
-
     setDiv(addEditDiv);
   } else {
+    // Editing existing review
     enableInput(false);
 
     try {
@@ -93,7 +103,6 @@ export const showAddEdit = async (jobId) => {
       });
 
       const data = await response.json();
-      console.log(data); 
       if (response.status === 200) {
         comment.value = data.review.comment;
         rating.value = data.review.rating;
@@ -101,16 +110,15 @@ export const showAddEdit = async (jobId) => {
         addingReview.textContent = "update";
         message.textContent = "";
         addEditDiv.dataset.id = jobId;
-
         setDiv(addEditDiv);
       } else {
-        message.textContent = "The reviews entry was not found";
-        showJobs();
+        message.textContent = "The review entry was not found.";
+        showReviews();
       }
     } catch (err) {
       console.log(err);
-      message.textContent = "A communications error has occurred.";
-      showJobs();
+      message.textContent = "A communication error has occurred.";
+      showReviews();
     }
 
     enableInput(true);

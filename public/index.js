@@ -26,22 +26,24 @@ export const setToken = (value) => {
 
 export let message = null;
 
-import { showJobs, handleJobs } from "./reviews.js";
 import { showLoginRegister, handleLoginRegister } from "./loginRegister.js";
 import { handleLogin } from "./login.js";
 import { handleAddEdit } from "./addEdit.js";
 import { handleRegister } from "./register.js";
+import { showRestaurant, handleRestaurants } from "./restaurant.js";
+import { handleReviews } from "./reviews.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   token = localStorage.getItem("token");
   message = document.getElementById("message");
   handleLoginRegister();
   handleLogin();
-  handleJobs();
+  handleReviews();
   handleRegister();
   handleAddEdit();
+  handleRestaurants();
   if (token) {
-    showJobs();
+    showRestaurant();
   } else {
     showLoginRegister();
   }

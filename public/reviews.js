@@ -8,23 +8,22 @@ import {
 } from "./index.js";
 import { showLoginRegister } from "./loginRegister.js";
 import { showAddEdit } from "./addEdit.js";
+import { showRestaurant } from "./restaurant.js";
 
-let jobsDiv = null;
+let reviewsDiv = null;
 let reviewsTable = null;
 let reviewsTableHeader = null;
 
-export const handleJobs = () => {
-  jobsDiv = document.getElementById("jobs");
+export const handleReviews = () => {
+  reviewsDiv = document.getElementById("reviews");
   const logoff = document.getElementById("logoff");
-  const addReview = document.getElementById("add-job");
-  reviewsTable = document.getElementById("jobs-table");
-  reviewsTableHeader = document.getElementById("jobs-table-header");
+  reviewsTable = document.getElementById("reviews-table");
+  reviewsTableHeader = document.getElementById("reviews-table-header");
+  const back = document.getElementById("back");
 
-  jobsDiv.addEventListener("click", async (e) => {
+  reviewsDiv.addEventListener("click", async (e) => {
     if (inputEnabled && e.target.nodeName === "BUTTON") {
-      if (e.target === addReview) {
-        showAddEdit(null);
-      } else if (e.target === logoff) {
+      if (e.target === logoff) {
         setToken(null);
         message.textContent = "You have been logged off.";
         reviewsTable.replaceChildren([reviewsTableHeader]);
@@ -49,7 +48,7 @@ export const handleJobs = () => {
           const data = await response.json();
           if (response.status === 200) {
             message.textContent = "The review entry was deleted.";
-            showJobs();
+            showReviews();
           } else {
             message.textContent = data.msg || "Failed to delete the review.";
           }
@@ -59,15 +58,22 @@ export const handleJobs = () => {
         }
 
         enableInput(true);
+      } else if (e.target === back) {
+        message.textContent = "";
+        showRestaurant();
       }
     }
   });
 };
 
-export const showJobs = async () => {
-  try {
-    enableInput(false);
+export const showReviews = async () => {
+  const reviewsDiv = document.getElementById("reviews");
+  const reviewsTable = document.getElementById("reviews-table");
+  const reviewsTableHeader = document.getElementById("reviews-table-header");
 
+  enableInput(false);
+
+  try {
     const response = await fetch("/api/v1/review", {
       method: "GET",
       headers: {
@@ -81,19 +87,21 @@ export const showJobs = async () => {
 
     if (response.status === 200) {
       if (data.count === 0) {
-        reviewsTable.replaceChildren(...children); // clear this for safety
+        reviewsTable.replaceChildren(...children);
       } else {
         for (let i = 0; i < data.reviews.length; i++) {
           let rowEntry = document.createElement("tr");
 
-          let editButton = `<td><button type="button" class="editButton" data-id=${data.reviews[i]._id}>edit</button></td>`;
-          let deleteButton = `<td><button type="button" class="deleteButton" data-id=${data.reviews[i]._id}>delete</button></td>`;
           let rowHTML = `
-              <td>${data.reviews[i].comment}</td>
-              <td>${data.reviews[i].rating}</td>
-              <td>${data.reviews[i].type}</td>
-              <div>${editButton}${deleteButton}</div>`;
-
+            <td>${data.reviews[i].restaurant.name}</td>
+            <td>${data.reviews[i].rating}</td>
+            <td>${data.reviews[i].comment}</td>
+            <td>${data.reviews[i].type}</td>
+            <td>
+              <button type="button" class="editButton" data-id="${data.reviews[i]._id}">Edit</button>
+              <button type="button" class="deleteButton" data-id="${data.reviews[i]._id}">Delete</button>
+            </td>
+          `;
           rowEntry.innerHTML = rowHTML;
           children.push(rowEntry);
         }
@@ -106,6 +114,7 @@ export const showJobs = async () => {
     console.log(err);
     message.textContent = "A communication error occurred.";
   }
+
   enableInput(true);
-  setDiv(jobsDiv);
+  setDiv(reviewsDiv);
 };

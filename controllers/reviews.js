@@ -3,8 +3,9 @@ const { StatusCodes } = require("http-status-codes");
 const Review = require("../models/Reviews");
 
 const getAllReviews = async (req, res) => {
-  const reviews = await Review.find({ createdBy: req.user.userId }).sort(
-    "createdAt"
+  const reviews = await Review.find({ createdBy: req.user.userId }).populate(
+    "restaurant",
+    "name"
   );
   res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
 };
@@ -46,7 +47,6 @@ const getReviewByRestaurantId = async (req, res) => {
 
 const createReview = async (req, res) => {
   req.body.createdBy = req.user.userId;
-  //console.log("Incoming review body:", req.body);
   const review = await Review.create(req.body);
   res.status(StatusCodes.CREATED).json({ review });
 };
