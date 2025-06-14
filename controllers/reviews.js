@@ -3,8 +3,9 @@ const { StatusCodes } = require("http-status-codes");
 const Review = require("../models/Reviews");
 
 const getAllReviews = async (req, res) => {
-  const reviews = await Review.find({ createdBy: req.user.userId }).sort(
-    "createdAt"
+  const reviews = await Review.find({ createdBy: req.user.userId }).populate(
+    "restaurant",
+    "name"
   );
   res.status(StatusCodes.OK).json({ reviews, count: reviews.length });
 };
@@ -26,28 +27,26 @@ const getReview = async (req, res) => {
 };
 
 const getReviewByRestaurantId = async (req, res) => {
+  const {
+    user: { userId },
+    params: { id: restaurantId },
+  } = req;
 
-    const {
-      user: { userId },
-      params: { id: restaurantId },
-    } = req;
+  const review = await Review.findOne({
+    restaurant: restaurantId,
+    createdBy: userId,
+  });
 
-    const review = await Review.findOne({
-      restaurant: restaurantId,
-      createdBy: userId,
-    });
-
-    if (!review) {
-      throw new NotFoundError(
-        `No review found for restaurant ID ${restaurantId} by user ${userId}`
-      );
-    }
-    res.status(StatusCodes.OK).json({ review });
+  if (!review) {
+    throw new NotFoundError(
+      `No review found for restaurant ID ${restaurantId} by user ${userId}`
+    );
+  }
+  res.status(StatusCodes.OK).json({ review });
 };
 
 const createReview = async (req, res) => {
   req.body.createdBy = req.user.userId;
-  //console.log("Incoming review body:", req.body);
   const review = await Review.create(req.body);
   res.status(StatusCodes.CREATED).json({ review });
 };
@@ -86,7 +85,7 @@ const deleteReview = async (req, res) => {
   if (!review) {
     throw new NotFoundError(`No review with id ${reviewId}`);
   }
-  res.status(StatusCodes.OK).send();
+  res.status(StatusCodes.OK).json({ msg: "The entry was deleted." });
 };
 module.exports = {
   createReview,
